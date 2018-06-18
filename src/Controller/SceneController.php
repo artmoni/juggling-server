@@ -41,6 +41,8 @@ class SceneController extends Controller
 
     }
 
+
+
     /**
      * @Route("/scene/{id}", name="sceneActive")
      */
@@ -49,6 +51,20 @@ class SceneController extends Controller
 
         $entityManager = $this->getDoctrine()->getManager();
         $scene = $entityManager->getRepository(Scene::class)->find($id);
+        if (!$scene instanceof Scene) throw new Exception("Scene not found");
+        $myJson = unserialize($scene->getPropreties());
+        return new JsonResponse($myJson);
+
+    }
+
+    /**
+     * @Route("/scene/last", name="sceneActive")
+     */
+    public function showLast()
+    {
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $scene = $entityManager->getRepository(Scene::class)->findOneBy(array(),array('id'=>'DESC'));
         if (!$scene instanceof Scene) throw new Exception("Scene not found");
         $myJson = unserialize($scene->getPropreties());
         return new JsonResponse($myJson);
