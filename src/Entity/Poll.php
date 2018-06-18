@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -21,6 +23,16 @@ class Poll
      */
     private $question;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\PollAnswer", mappedBy="poll")
+     */
+    private $answers;
+
+    public function __construct()
+    {
+        $this->answers = new ArrayCollection();
+    }
+
     public function getId()
     {
         return $this->id;
@@ -34,6 +46,37 @@ class Poll
     public function setQuestion(string $question): self
     {
         $this->question = $question;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PollAnswer[]
+     */
+    public function getAnswers(): Collection
+    {
+        return $this->answers;
+    }
+
+    public function addAnswer(PollAnswer $answer): self
+    {
+        if (!$this->answers->contains($answer)) {
+            $this->answers[] = $answer;
+            $answer->setPoll($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAnswer(PollAnswer $answer): self
+    {
+        if ($this->answers->contains($answer)) {
+            $this->answers->removeElement($answer);
+            // set the owning side to null (unless already changed)
+            if ($answer->getPoll() === $this) {
+                $answer->setPoll(null);
+            }
+        }
 
         return $this;
     }

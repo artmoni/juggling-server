@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -21,6 +23,12 @@ class PollAnswer
      */
     private $answer;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Poll", inversedBy="answers")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $poll;
+
     public function getId()
     {
         return $this->id;
@@ -34,6 +42,18 @@ class PollAnswer
     public function setAnswer(string $answer): self
     {
         $this->answer = $answer;
+
+        return $this;
+    }
+
+    public function getPoll(): ?Poll
+    {
+        return $this->poll;
+    }
+
+    public function setPoll(?Poll $poll): self
+    {
+        $this->poll = $poll;
 
         return $this;
     }
