@@ -3,13 +3,17 @@
 namespace App\Controller;
 
 use App\Entity\Poll;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 
 class PollController extends Controller
 {
     /**
-     * @Route("/poll", name="poll")
+     * @Route("/polls", name="poll")
+     * @Method("GET")
      */
     public function index()
     {
@@ -26,7 +30,8 @@ class PollController extends Controller
 
 
     /**
-     * @Route("/poll/{id}", name="poll_show")
+     * @Route("/polls/{id}", name="poll_show")
+     * @Method("GET")
      */
     public function show($id)
     {
@@ -43,5 +48,25 @@ class PollController extends Controller
             'controller_name' => 'PollController',
             'poll' => $poll
         ]);
+    }
+
+    /**
+     * @Route("/polls", name="poll_create")
+     * @Method("POST")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function createQuestion(Request $request)
+    {
+        $value = json_decode($request->getContent());
+
+        $question = $value->question;
+        $poll = new Poll();
+        $poll->setQuestion($question);
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($poll);
+        $entityManager->flush();
+
+        return new JsonResponse();
     }
 }
