@@ -29,9 +29,9 @@ class Poll
     private $answers;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\SurveyPoll", inversedBy="poll")
+     * @ORM\OneToMany(targetEntity="App\Entity\SurveyPoll", mappedBy="poll")
      */
-    private $surveyPoll;
+    private $surveys;
 
     public function __construct()
     {
@@ -86,15 +86,21 @@ class Poll
         return $this;
     }
 
-    public function getSurveyPoll(): ?SurveyPoll
+    /**
+     * @return mixed
+     */
+    public function getSurveys()
     {
-        return $this->surveyPoll;
+        return $this->surveys;
     }
 
-    public function setSurveyPoll(?SurveyPoll $surveyPoll): self
+    /**
+     * @param mixed $surveys
+     */
+    public function setSurveys($surveys)
     {
-        $this->surveyPoll = $surveyPoll;
-
-        return $this;
+        $this->surveys = $surveys;
     }
+
+
 }

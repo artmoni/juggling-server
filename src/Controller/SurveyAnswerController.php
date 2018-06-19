@@ -27,22 +27,31 @@ class SurveyAnswerController extends Controller
 
 
     /**
-     * @Route("/surveys/answers", name="survey_answer")
+     * @Route("/surveys/answers", name="survey_answer_create")
      * @Method("POST")
      */
     public function create(Request $request)
     {
-        $value = json_decode($request->getContent(), true);
-        $pollAnswer = $this->get('jms_serializer')->deserialize(json_encode($value["answer"]), PollAnswer::class, 'json');
+        $entityManager = $this->getDoctrine()->getManager();
 
-        if (!$pollAnswer instanceof PollAnswer)
+        $value = json_decode($request->getContent(), true);
+
+        $pollAnswer = $this->get('jms_serializer')->deserialize(json_encode($value["answer"]), PollAnswer::class, 'json');
+        $survey = $this->get('jms_serializer')->deserialize(json_encode($value["survey"]), SurveyPoll::class, 'json');
+
+        if (!$pollAnswer instanceof PollAnswer || !$survey instanceof SurveyPoll)
             throw new Exception("You need to add an answer attribute of PollAnswer type");
 
+        $survey = $entityManager->getRepository(SurveyPoll::class)->find($survey->getId());
         $answerSurvey = new SurveyAnswer();
+
         $answerSurvey->setAnswerId($pollAnswer->getId());
         $answerSurvey->setDateAnswer(new \DateTime());
+        $answerSurvey->setSurveyPoll($survey);
+        $survey->addSurveyAnswer($answerSurvey);
 
-        $entityManager = $this->getDoctrine()->getManager();
+
+        $entityManager->persist($survey);
         $entityManager->persist($answerSurvey);
         $entityManager->flush();
         return new JsonResponse($pollAnswer);

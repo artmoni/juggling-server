@@ -39,12 +39,12 @@ class SurveyPoll
     private $limitUser;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Poll", mappedBy="surveyPoll")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Poll", inversedBy="surveys")
      */
     private $poll;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\SurveyAnswer", mappedBy="surveyPollId")
+     * @ORM\OneToMany(targetEntity="App\Entity\SurveyAnswer", mappedBy="surveyPoll")
      */
     private $surveyAnswers;
 
@@ -150,7 +150,7 @@ class SurveyPoll
     {
         if (!$this->surveyAnswers->contains($surveyAnswer)) {
             $this->surveyAnswers[] = $surveyAnswer;
-            $surveyAnswer->setSurveyPollId($this);
+            $surveyAnswer->setSurveyPoll($this);
         }
 
         return $this;
@@ -161,8 +161,8 @@ class SurveyPoll
         if ($this->surveyAnswers->contains($surveyAnswer)) {
             $this->surveyAnswers->removeElement($surveyAnswer);
             // set the owning side to null (unless already changed)
-            if ($surveyAnswer->getSurveyPollId() === $this) {
-                $surveyAnswer->setSurveyPollId(null);
+            if ($surveyAnswer->getSurveyPoll() === $this) {
+                $surveyAnswer->setSurveyPoll(null);
             }
         }
 

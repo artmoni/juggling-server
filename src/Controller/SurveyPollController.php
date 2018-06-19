@@ -20,7 +20,18 @@ class SurveyPollController extends Controller
         $entityManager = $this->getDoctrine()->getManager();
         $surveys = $entityManager->getRepository(SurveyPoll::class)->findAll();
         $surveys_json = $this->get('jms_serializer')->serialize($surveys, 'json');
-        return new JsonResponse($surveys_json);
+        return new JsonResponse(json_decode($surveys_json));
+
+    }/**
+     * @Route("/surveys/polls/{id}", name="survey_polls_id")
+     * @Method("GET")
+     */
+    public function show($id)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $surveys = $entityManager->getRepository(SurveyPoll::class)->find($id);
+        $surveys_json = $this->get('jms_serializer')->serialize($surveys, 'json');
+        return new JsonResponse(json_decode($surveys_json));
 
     }
 

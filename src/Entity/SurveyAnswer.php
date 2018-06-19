@@ -19,7 +19,7 @@ class SurveyAnswer
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\SurveyPoll", inversedBy="surveyAnswers")
      */
-    private $surveyPollId;
+    private $surveyPoll;
 
     /**
      * @ORM\Column(type="datetime")
@@ -41,14 +41,14 @@ class SurveyAnswer
         return $this->id;
     }
 
-    public function getSurveyPollId(): ?SurveyPoll
+    public function getSurveyPoll(): ?SurveyPoll
     {
-        return $this->surveyPollId;
+        return $this->surveyPoll;
     }
 
-    public function setSurveyPollId(?SurveyPoll $surveyPollId): self
+    public function setSurveyPoll(?SurveyPoll $surveyPoll): self
     {
-        $this->surveyPollId = $surveyPollId;
+        $this->surveyPoll = $surveyPoll;
 
         return $this;
     }
