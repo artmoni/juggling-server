@@ -45,7 +45,7 @@ class PollController extends Controller
 //        $serializer = new Serializer(new ObjectNormalizer(), new JsonEncoder());
 
 
-        return new JsonResponse($json);
+        return new JsonResponse(json_decode($json));
 
 //        return $this->render('poll/index.html.twig', [
 //            'controller_name' => 'PollController',
