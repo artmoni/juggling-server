@@ -2,18 +2,36 @@
 
 namespace App\Controller;
 
+use App\Entity\SurveyPoll;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class SurveyPollController extends Controller
 {
     /**
-     * @Route("/survey/poll", name="survey_poll")
+     * @Route("/surveys/polls", name="survey_polls")
+     * @Method("GET")
      */
     public function index()
     {
-        return $this->render('survey_poll/index.html.twig', [
-            'controller_name' => 'SurveyPollController',
-        ]);
+        $entityManager = $this->getDoctrine()->getManager();
+        $surveys = $entityManager->getRepository(SurveyPoll::class)->findAll();
+        $surveys_json = $this->get('jms_serializer')->serialize($surveys, 'json');
+        return new JsonResponse($surveys_json);
+
+    }
+
+    /**
+     * @Route("/surveys/polls" , name="survey_poll_create")
+     * @Method("POST")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function create(Request $request)
+    {
+        return new JsonResponse();
     }
 }
