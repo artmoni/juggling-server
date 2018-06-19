@@ -28,6 +28,11 @@ class Poll
      */
     private $answers;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\SurveyPoll", inversedBy="poll")
+     */
+    private $surveyPoll;
+
     public function __construct()
     {
         $this->answers = new ArrayCollection();
@@ -77,6 +82,18 @@ class Poll
                 $answer->setPoll(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSurveyPoll(): ?SurveyPoll
+    {
+        return $this->surveyPoll;
+    }
+
+    public function setSurveyPoll(?SurveyPoll $surveyPoll): self
+    {
+        $this->surveyPoll = $surveyPoll;
 
         return $this;
     }

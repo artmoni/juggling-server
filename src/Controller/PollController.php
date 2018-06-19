@@ -8,6 +8,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+//use Symfony\Component\Serializer\Encoder\JsonEncoder;
+//use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+//use Symfony\Component\Serializer\Serializer;
 
 class PollController extends Controller
 {
@@ -18,14 +21,36 @@ class PollController extends Controller
     public function index()
     {
         $entityManager = $this->getDoctrine()->getManager();
+        $questions = $entityManager->getRepository(Poll::class)->findAll();
 
-        $poll = new Poll();
-        $poll->setQuestion("quel age avez vous ?");
-        $entityManager->persist($poll);
-        $entityManager->flush();
-        return $this->render('poll/index.html.twig', [
-            'controller_name' => 'PollController',
-        ]);
+//        $entityManager = $this->getDoctrine()->getManager();
+//
+//        $poll = new Poll();
+//        $poll->setQuestion("quel age avez vous ?");
+//        $entityManager->persist($poll);
+//        $entityManager->flush();
+
+        $json = $this->get('jms_serializer')->serialize($questions,'json');
+
+
+
+//        $json = $serializerInterface->serialize(
+//            $questions,
+//            'json', array('questions' => array('question_array'))
+//        );
+//        $response = new JsonResponse($json);
+//
+//        $response->headers->set('Content-Type', 'application/json');
+//        return new $response;
+//        $serializer = new Serializer(new ObjectNormalizer(), new JsonEncoder());
+
+
+        return new JsonResponse($json);
+
+//        return $this->render('poll/index.html.twig', [
+//            'controller_name' => 'PollController',
+//            'poll' =>$questions
+//        ]);
     }
 
 
@@ -44,6 +69,9 @@ class PollController extends Controller
                 'No product found for id ' . $id
             );
         }
+//        $json = $this->get('jms_serializer')->serialize($poll,'json');
+//        return new JsonResponse($json);
+
         return $this->render('poll/show.html.twig', [
             'controller_name' => 'PollController',
             'poll' => $poll
