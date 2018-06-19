@@ -31,6 +31,11 @@ class SurveyAnswer
      */
     private $userId;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $answerId;
+
     public function getId()
     {
         return $this->id;
@@ -68,6 +73,18 @@ class SurveyAnswer
     public function setUserId(?User $userId): self
     {
         $this->userId = $userId;
+
+        return $this;
+    }
+
+    public function getAnswerId(): ?int
+    {
+        return $this->answerId;
+    }
+
+    public function setAnswerId(int $answerId): self
+    {
+        $this->answerId = $answerId;
 
         return $this;
     }

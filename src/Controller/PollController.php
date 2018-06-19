@@ -69,13 +69,13 @@ class PollController extends Controller
                 'No product found for id ' . $id
             );
         }
-//        $json = $this->get('jms_serializer')->serialize($poll,'json');
-//        return new JsonResponse($json);
+        $json = $this->get('jms_serializer')->serialize($poll,'json');
+        return new JsonResponse(json_decode($json));
 
-        return $this->render('poll/show.html.twig', [
-            'controller_name' => 'PollController',
-            'poll' => $poll
-        ]);
+//        return $this->render('poll/show.html.twig', [
+//            'controller_name' => 'PollController',
+//            'poll' => $poll
+//        ]);
     }
 
     /**
