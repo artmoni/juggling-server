@@ -38,11 +38,11 @@ class SceneController extends Controller
         $processingConfig = new ProcessingConfig();
         $processingConfig->setBackground($request->get('background'));
 
-        $background = serialize($processingConfig->getProperties());
+        $serialized_properties = serialize($processingConfig->getProperties());
 
         $scene = new Scene();
         $scene->setName($name);
-        $scene->setPropreties($background);
+        $scene->setPropreties($serialized_properties);
 
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($scene);
