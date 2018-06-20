@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\ProcessingConfig;
 use App\Entity\Scene;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Config\Definition\Exception\Exception;
@@ -13,27 +14,35 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class SceneController extends Controller
 {
     /**
-     * @Route("/scene", name="scene")
+     * @Route("/scenes", name="scene")
+     * @Method("GET")
      */
     public function index()
     {
-        return $this->render('scene/index.html.twig', [
-            'controller_name' => 'SceneController',
-        ]);
+        $entityManager = $this->getDoctrine()->getManager();
+        $scenes = $entityManager->getRepository(Scene::class)->findAll();
+        $scenes_json = $this->get('jms_serializer')->serialize($scenes, 'json');
+        return new JsonResponse(json_decode($scenes_json));
+
     }
 
     /**
-     * @Route("/scenes/create", name="sceneCreate")
+     * @Route("/scenes", name="sceneCreate")
      * @Method("POST")
      */
     public function createProperty(Request $request)
     {
-        $background = $request->get('background');
+//        $background = $request->get('background');
         $name = $request->get('name');
+
+        $processingConfig = new ProcessingConfig();
+        $processingConfig->setBackground($request->get('background'));
+
+        $background = $this->get('jms_serializer')->serialize($processingConfig, 'json');
 
         $scene = new Scene();
         $scene->setName($name);
-        $scene->setPropreties(serialize(array('background' => $background)));
+        $scene->setPropreties($background);
 
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($scene);
@@ -61,7 +70,7 @@ class SceneController extends Controller
     }
 
     /**
-     * @Route("/scenes", name="sceneActive")
+     * @Route("/scenes", name="lastScene")
      * @Method("GET")
      */
     public function showLast()
