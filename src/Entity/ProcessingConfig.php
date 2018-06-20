@@ -2,23 +2,12 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\ProcessingConfigRepository")
- */
 class ProcessingConfig
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+
     private $id;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
     private $background;
 
     public function getId()
@@ -37,4 +26,18 @@ class ProcessingConfig
 
         return $this;
     }
+
+    public function getProperties(): ?array
+    {
+        $properties = array("background" => $this->background);
+        return $properties;
+    }
+
+//    public function getPropertiesToString(): ?string
+//    {
+//        $properties = array("background" => $this->background);
+//        $propertiesString = serialize($properties);
+//        return $propertiesString;
+//    }
+
 }

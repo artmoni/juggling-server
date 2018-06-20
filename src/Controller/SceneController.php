@@ -38,7 +38,7 @@ class SceneController extends Controller
         $processingConfig = new ProcessingConfig();
         $processingConfig->setBackground($request->get('background'));
 
-        $background = $this->get('jms_serializer')->serialize($processingConfig, 'json');
+        $background = serialize($processingConfig->getProperties());
 
         $scene = new Scene();
         $scene->setName($name);
@@ -64,8 +64,14 @@ class SceneController extends Controller
         $entityManager = $this->getDoctrine()->getManager();
         $scene = $entityManager->getRepository(Scene::class)->find($id);
         if (!$scene instanceof Scene) throw new Exception("Scene not found");
-        $myJson = unserialize($scene->getPropreties());
-        return new JsonResponse($myJson);
+
+        $proprities = unserialize($scene->getPropreties());
+        $processingConfig = new ProcessingConfig();
+        $processingConfig->setBackground($proprities['background']);
+        $propritiesProcessing = serialize($processingConfig->getProperties());
+        $json = unserialize($propritiesProcessing);
+
+        return new JsonResponse($json);
 
     }
 
