@@ -29,6 +29,11 @@ class PollAnswer
      */
     private $poll;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Scene", inversedBy="pollAnswer")
+     */
+    private $scene;
+
     public function getId()
     {
         return $this->id;
@@ -54,6 +59,18 @@ class PollAnswer
     public function setPoll(?Poll $poll): self
     {
         $this->poll = $poll;
+
+        return $this;
+    }
+
+    public function getScene(): ?Scene
+    {
+        return $this->scene;
+    }
+
+    public function setScene(?Scene $scene): self
+    {
+        $this->scene = $scene;
 
         return $this;
     }

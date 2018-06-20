@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -25,6 +27,16 @@ class Scene
      * @ORM\Column(type="string",length=255)
      */
     private $propreties;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\PollAnswer", mappedBy="scene")
+     */
+    private $pollAnswer;
+
+    public function __construct()
+    {
+        $this->pollAnswer = new ArrayCollection();
+    }
 
     public function getId()
     {
@@ -51,6 +63,37 @@ class Scene
     public function setPropreties($propreties): self
     {
         $this->propreties = $propreties;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PollAnswer[]
+     */
+    public function getPollAnswer(): Collection
+    {
+        return $this->pollAnswer;
+    }
+
+    public function addPollAnswer(PollAnswer $pollAnswer): self
+    {
+        if (!$this->pollAnswer->contains($pollAnswer)) {
+            $this->pollAnswer[] = $pollAnswer;
+            $pollAnswer->setScene($this);
+        }
+
+        return $this;
+    }
+
+    public function removePollAnswer(PollAnswer $pollAnswer): self
+    {
+        if ($this->pollAnswer->contains($pollAnswer)) {
+            $this->pollAnswer->removeElement($pollAnswer);
+            // set the owning side to null (unless already changed)
+            if ($pollAnswer->getScene() === $this) {
+                $pollAnswer->setScene(null);
+            }
+        }
 
         return $this;
     }

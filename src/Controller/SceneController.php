@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Scene;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,7 +23,8 @@ class SceneController extends Controller
     }
 
     /**
-     * @Route("/scene/create", name="sceneCreate")
+     * @Route("/scenes/create", name="sceneCreate")
+     * @Method("POST")
      */
     public function createProperty(Request $request)
     {
@@ -44,7 +46,8 @@ class SceneController extends Controller
 
 
     /**
-     * @Route("/scene/{id}", name="sceneActive")
+     * @Route("/scenes/{id}", name="sceneActiveById")
+     * @Method("GET")
      */
     public function show($id)
     {
@@ -58,7 +61,8 @@ class SceneController extends Controller
     }
 
     /**
-     * @Route("/scene/last", name="sceneActive")
+     * @Route("/scenes", name="sceneActive")
+     * @Method("GET")
      */
     public function showLast()
     {
