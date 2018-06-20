@@ -55,8 +55,33 @@ class SceneController extends Controller
 
 
     /**
+     * @Route("/scenes/last", name="lastScene")
+     * @Method("GET")
+     */
+    public function showLast()
+    {
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $scene = $entityManager->getRepository(Scene::class)->findOneBy(array(),array('id'=>'DESC'));
+        dump($scene);
+        if (!$scene instanceof Scene) throw new Exception("Scene not found");
+
+        $proprities = unserialize($scene->getPropreties());
+        $processingConfig = new ProcessingConfig();
+        $processingConfig->setBackground($proprities['background']);
+        $propritiesProcessing = serialize($processingConfig->getProperties());
+        $json = unserialize($propritiesProcessing);
+
+        return new JsonResponse($json);
+
+
+    }
+
+    /**
      * @Route("/scenes/{id}", name="sceneActiveById")
      * @Method("GET")
+     * @param $id
+     * @return JsonResponse
      */
     public function show($id)
     {
@@ -72,21 +97,6 @@ class SceneController extends Controller
         $json = unserialize($propritiesProcessing);
 
         return new JsonResponse($json);
-
-    }
-
-    /**
-     * @Route("/scenes", name="lastScene")
-     * @Method("GET")
-     */
-    public function showLast()
-    {
-
-        $entityManager = $this->getDoctrine()->getManager();
-        $scene = $entityManager->getRepository(Scene::class)->findOneBy(array(),array('id'=>'DESC'));
-        if (!$scene instanceof Scene) throw new Exception("Scene not found");
-        $myJson = unserialize($scene->getPropreties());
-        return new JsonResponse($myJson);
 
     }
 }
