@@ -34,6 +34,16 @@ class PollAnswer
      */
     private $scene;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\SurveyAnswer", mappedBy="pollAnswer")
+     */
+    private $surveyAnswers;
+
+    public function __construct()
+    {
+        $this->surveyAnswers = new ArrayCollection();
+    }
+
     public function getId()
     {
         return $this->id;
@@ -71,6 +81,37 @@ class PollAnswer
     public function setScene(?Scene $scene): self
     {
         $this->scene = $scene;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|SurveyAnswer[]
+     */
+    public function getSurveyAnswers(): Collection
+    {
+        return $this->surveyAnswers;
+    }
+
+    public function addSurveyAnswer(SurveyAnswer $surveyAnswer): self
+    {
+        if (!$this->surveyAnswers->contains($surveyAnswer)) {
+            $this->surveyAnswers[] = $surveyAnswer;
+            $surveyAnswer->setPollAnswer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSurveyAnswer(SurveyAnswer $surveyAnswer): self
+    {
+        if ($this->surveyAnswers->contains($surveyAnswer)) {
+            $this->surveyAnswers->removeElement($surveyAnswer);
+            // set the owning side to null (unless already changed)
+            if ($surveyAnswer->getPollAnswer() === $this) {
+                $surveyAnswer->setPollAnswer(null);
+            }
+        }
 
         return $this;
     }

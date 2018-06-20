@@ -43,9 +43,11 @@ class SurveyAnswerController extends Controller
             throw new Exception("You need to add an answer attribute of PollAnswer type");
 
         $survey = $entityManager->getRepository(SurveyPoll::class)->find($survey->getId());
+        $answer = $entityManager->getRepository(PollAnswer::class)->find($pollAnswer->getId());
         $answerSurvey = new SurveyAnswer();
 
-        $answerSurvey->setAnswerId($pollAnswer->getId());
+        //$answerSurvey->setAnswerId($pollAnswer->getId());
+        $answerSurvey->setPollAnswer($answer);
         $answerSurvey->setDateAnswer(new \DateTime());
         $answerSurvey->setSurveyPoll($survey);
         $survey->addSurveyAnswer($answerSurvey);

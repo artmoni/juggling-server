@@ -32,9 +32,9 @@ class SurveyAnswer
     private $userId;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\ManyToOne(targetEntity="App\Entity\PollAnswer", inversedBy="surveyAnswers")
      */
-    private $answerId;
+    private $pollAnswer;
 
     public function getId()
     {
@@ -77,14 +77,14 @@ class SurveyAnswer
         return $this;
     }
 
-    public function getAnswerId(): ?int
+    public function getPollAnswer(): ?PollAnswer
     {
-        return $this->answerId;
+        return $this->pollAnswer;
     }
 
-    public function setAnswerId(int $answerId): self
+    public function setPollAnswer(?PollAnswer $pollAnswer): self
     {
-        $this->answerId = $answerId;
+        $this->pollAnswer = $pollAnswer;
 
         return $this;
     }
