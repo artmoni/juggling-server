@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\PollAnswer;
 use App\Entity\SurveyAnswer;
 use App\Entity\SurveyPoll;
+use App\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -38,12 +39,18 @@ class SurveyAnswerController extends Controller
 
         $pollAnswer = $this->get('jms_serializer')->deserialize(json_encode($value["answer"]), PollAnswer::class, 'json');
         $survey = $this->get('jms_serializer')->deserialize(json_encode($value["survey"]), SurveyPoll::class, 'json');
+        $currentUser = $this->get('jms_serializer')->deserialize(json_encode($value["user"][0]), User::class, 'json');
+
 
         if (!$pollAnswer instanceof PollAnswer || !$survey instanceof SurveyPoll)
             throw new Exception("You need to add an answer attribute of PollAnswer type");
 
+        if (!$currentUser instanceof User)
+            throw new Exception("User does not exist");
+
         $survey = $entityManager->getRepository(SurveyPoll::class)->find($survey->getId());
         $answer = $entityManager->getRepository(PollAnswer::class)->find($pollAnswer->getId());
+        $user = $entityManager->getRepository(User::class)->find($currentUser->getId());
         $answerSurvey = new SurveyAnswer();
 
         //$answerSurvey->setAnswerId($pollAnswer->getId());
@@ -51,6 +58,7 @@ class SurveyAnswerController extends Controller
         $answerSurvey->setDateAnswer(new \DateTime());
         $answerSurvey->setSurveyPoll($survey);
         $survey->addSurveyAnswer($answerSurvey);
+        $answerSurvey->setUser($user);
 
 
         $entityManager->persist($survey);
