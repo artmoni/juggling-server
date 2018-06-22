@@ -22,7 +22,9 @@ class SurveyPollController extends Controller
         $surveys_json = $this->get('jms_serializer')->serialize($surveys, 'json');
         return new JsonResponse(json_decode($surveys_json));
 
-    }/**
+    }
+
+    /**
      * @Route("/surveys/polls/{id}", name="survey_polls_id")
      * @Method("GET")
      */
