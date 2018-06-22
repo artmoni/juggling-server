@@ -15,7 +15,7 @@ class SceneController extends Controller
 {
     /**
      * @Route("/scenes", name="scene")
-     * @Method("GET")
+     * @Method("GET")gi
      */
     public function index()
     {

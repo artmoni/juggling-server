@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -19,39 +21,101 @@ class User
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $username;
+    private $name;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="string", length=255)
      */
-    private $dateSubscribe;
+    private $mail;
+
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $tel;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\SurveyAnswer", mappedBy="user")
+     */
+    private $surveyAnswers;
+
+    public function __construct()
+    {
+        $this->surveyAnswers = new ArrayCollection();
+    }
+
 
     public function getId()
     {
         return $this->id;
     }
 
-    public function getUsername(): ?string
+    public function getMail(): ?string
     {
-        return $this->username;
+        return $this->mail;
     }
 
-    public function setUsername(string $username): self
+    public function setMail(string $mail): self
     {
-        $this->username = $username;
+        $this->mail = $mail;
 
         return $this;
     }
 
-    public function getDateSubscribe(): ?\DateTimeInterface
+    public function getTel(): ?string
     {
-        return $this->dateSubscribe;
+        return $this->tel;
     }
 
-    public function setDateSubscribe(\DateTimeInterface $dateSubscribe): self
+    public function setTel(string $tel): self
     {
-        $this->dateSubscribe = $dateSubscribe;
+        $this->tel = $tel;
 
         return $this;
     }
+
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|SurveyAnswer[]
+     */
+    public function getSurveyAnswers(): Collection
+    {
+        return $this->surveyAnswers;
+    }
+
+    public function addSurveyAnswer(SurveyAnswer $surveyAnswer): self
+    {
+        if (!$this->surveyAnswers->contains($surveyAnswer)) {
+            $this->surveyAnswers[] = $surveyAnswer;
+            $surveyAnswer->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSurveyAnswer(SurveyAnswer $surveyAnswer): self
+    {
+        if ($this->surveyAnswers->contains($surveyAnswer)) {
+            $this->surveyAnswers->removeElement($surveyAnswer);
+            // set the owning side to null (unless already changed)
+            if ($surveyAnswer->getUser() === $this) {
+                $surveyAnswer->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

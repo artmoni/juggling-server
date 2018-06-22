@@ -26,15 +26,17 @@ class SurveyAnswer
      */
     private $dateAnswer;
 
-    /**
-     * @ORM\OneToOne(targetEntity="App\Entity\User", cascade={"persist", "remove"})
-     */
-    private $userId;
+
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\PollAnswer", inversedBy="surveyAnswers")
      */
     private $pollAnswer;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="surveyAnswers")
+     */
+    private $user;
 
     public function getId()
     {
@@ -64,18 +66,7 @@ class SurveyAnswer
 
         return $this;
     }
-
-    public function getUserId(): ?User
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(?User $userId): self
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
+    
 
     public function getPollAnswer(): ?PollAnswer
     {
@@ -85,6 +76,18 @@ class SurveyAnswer
     public function setPollAnswer(?PollAnswer $pollAnswer): self
     {
         $this->pollAnswer = $pollAnswer;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }
