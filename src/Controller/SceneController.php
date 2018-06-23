@@ -10,6 +10,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
+use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 class SceneController extends Controller
 {
@@ -35,8 +39,12 @@ class SceneController extends Controller
 //        $background = $request->get('background');
         $name = $request->get('name');
 
-        $processingConfig = new ProcessingConfig();
-        $processingConfig->setBackground($request->get('background'));
+        $serializer = new Serializer(
+            array(new GetSetMethodNormalizer(), new ArrayDenormalizer()),
+            array(new JsonEncoder())
+        );
+        $processingConfig = $serializer->deserialize($request->getContent(), ProcessingConfig::class, "json");
+//        $processingConfig->setBackground($processingConfig->getBackground());
 
         $serialized_properties = serialize($processingConfig->getProperties());
 
@@ -48,10 +56,9 @@ class SceneController extends Controller
         $entityManager->persist($scene);
         $entityManager->flush();
 
-        return new JsonResponse();
+        return new JsonResponse(json_decode($serializer->serialize($scene,"json")));
 
     }
-
 
 
     /**
@@ -62,13 +69,13 @@ class SceneController extends Controller
     {
 
         $entityManager = $this->getDoctrine()->getManager();
-        $scene = $entityManager->getRepository(Scene::class)->findOneBy(array(),array('id'=>'DESC'));
-        dump($scene);
-        if (!$scene instanceof Scene) throw new Exception("Scene not found");
+        $scene = $entityManager->getRepository(Scene::class)->findOneBy(array(), array('id' => 'DESC'));
+        if (!$scene instanceof Scene)
+            return new JsonResponse(array("error"=>"No scene found"), JsonResponse::HTTP_NO_CONTENT);
 
-        $proprities = unserialize($scene->getPropreties());
+        $properties = unserialize($scene->getPropreties());
         $processingConfig = new ProcessingConfig();
-        $processingConfig->setBackground($proprities['background']);
+        $processingConfig->setBackground($properties['background']);
         $propritiesProcessing = serialize($processingConfig->getProperties());
         $json = unserialize($propritiesProcessing);
 
