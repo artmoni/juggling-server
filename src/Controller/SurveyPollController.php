@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\SurveyAnswer;
 use App\Entity\SurveyPoll;
+use App\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,18 +35,21 @@ class SurveyPollController extends Controller
     public function showForOneUser($id)
     {
         $entityManager = $this->getDoctrine()->getManager();
+
+        $user = $entityManager->getRepository(User::class)->find($id);
         $idSurveyToSend = 0;
         $surveys = $entityManager->getRepository(SurveyPoll::class)->findAll();
-        $answers = $entityManager->getRepository(SurveyAnswer::class)->findBy(["id" => $id]);
+        $answers = $entityManager->getRepository(SurveyAnswer::class)->findBy(['user' => $user]);
+        dump($answers);
         foreach ($surveys as $survey) {
             if ($survey instanceof SurveyPoll) {
                 foreach ($answers as $answer) {
                     if ($answer instanceof SurveyAnswer) {
-                        if ($survey->getId() == $answer->getId())
+//                        dump($answer);
+                        if ($survey == $answer->getSurveyPoll())
                             $idSurveyToSend++;
                         else
                             break;
-
                     }
                 }
             } else
