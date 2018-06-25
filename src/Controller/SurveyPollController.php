@@ -14,13 +14,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class SurveyPollController extends Controller
 {
     /**
-     * @Route("/surveys/polls", name="survey_polls")
+     * @Route("/users/{id}/surveys", name="survey_polls")
      * @Method("GET")
      */
-    public function index()
+    public function index($id)
     {
         $entityManager = $this->getDoctrine()->getManager();
-        $user = $entityManager->getRepository(User::class)->find(1);
+        $user = $entityManager->getRepository(User::class)->find($id);
+        if(!$user instanceof User)
+            return new JsonResponse("User not found",JsonResponse::HTTP_NOT_FOUND);
 
         $surveys = $entityManager->getRepository(SurveyPoll::class)->findAllSurveys($user);
         $surveys_json = $this->get('jms_serializer')->serialize($surveys, 'json');
