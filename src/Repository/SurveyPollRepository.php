@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\SurveyPoll;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -47,4 +48,24 @@ class SurveyPollRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    /**
+     * @param User $user
+     * @return SurveyPoll[]
+     */
+    public function findAllSurveys(User $user)
+    {
+        $qb2 = $this->createQueryBuilder('s2')
+            ->select('s2.id')
+            ->join('s2.surveyAnswers', 'a')
+            ->join('a.user', 'u')
+            ->where('u.id = :id')
+            ;
+
+        $qb = $this->createQueryBuilder('s');
+        $qb->where($qb->expr()->notIn('s.id', $qb2->getDQL()))
+            ->setParameter('id', $user->getId());
+
+        return $qb->getQuery()->getResult();
+    }
 }
