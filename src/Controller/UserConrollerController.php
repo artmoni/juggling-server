@@ -34,23 +34,24 @@ class UserConrollerController extends Controller
 
     }
     /**
-     * @Route("/users/signin", name = "user_subscribe")
+     * @Route("/users", name = "user_subscribe")
      * @Method("POST")
      */
     public function subscribe(Request $request){
 
-        $user = json_decode($request->getContent(), true);
-
-        $name = $this->get('jms_serializer')->deserialize(json_encode($user["name"]), String::class, 'json');
-
+//        $user = json_decode($request->getContent(), true);
+//
+//        $name = $this->get('jms_serializer')->deserialize(json_encode($user["name"]), String::class, 'json');
+//
         $entityManager = $this->getDoctrine()->getManager();
-        $users = $entityManager->getRepository(User::class)->findOneBy($name);
-        if($users == null && $user instanceof User) {
+        $user = new User();
+//        $users = $entityManager->getRepository(User::class)->findOneBy($name);
+//        if($users == null && $user instanceof User) {
             $entityManager->persist($user);
             $entityManager->flush();
-            return new JsonResponse();
-        }
-        return new JsonResponse();
+//            return new JsonResponse();
+//        }
+        return new JsonResponse(json_decode($this->get('jms_serializer')->serialize($user, 'json')));
     }
 
 
