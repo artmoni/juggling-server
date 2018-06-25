@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\PollAnswer;
 use App\Entity\ProcessingConfig;
 use App\Entity\Scene;
+use App\Entity\SurveyAnswer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -61,6 +63,7 @@ class SceneController extends Controller
     }
 
 
+
     /**
      * @Route("/scenes/last", name="lastScene")
      * @Method("GET")
@@ -81,6 +84,39 @@ class SceneController extends Controller
 
         return new JsonResponse($json);
 
+
+    }
+
+    /**
+     * @Route("/scenes/current", name="sceneActiveByResponse")
+     * @Method("GET")
+     * @return JsonResponse
+     */
+    public function showCurrent()
+    {
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $surveyAnswer = $entityManager->getRepository(SurveyAnswer::class)->findOneBy(array(), array('id' => 'DESC'));
+        if (!$surveyAnswer instanceof SurveyAnswer) {
+            $scene = $entityManager->getRepository(Scene::class)->findOneBy(array(), array('id' => 'DESC'));
+        } else {
+            if (!$surveyAnswer instanceof SurveyAnswer) throw new Exception("Survey Not found");
+
+            $answer = $entityManager->getRepository(PollAnswer::class)->find($surveyAnswer->getPollAnswer()->getId());
+
+            if (!$answer instanceof PollAnswer) throw new Exception("Answer Not found");
+
+            $scene = $entityManager->getRepository(Scene::class)->find($answer->getScene()->getId());
+        }
+        if (!$scene instanceof Scene) throw new Exception("Scene not found");
+
+        $proprities = unserialize($scene->getPropreties());
+        $processingConfig = new ProcessingConfig();
+        $processingConfig->setBackground($proprities['background']);
+        $propritiesProcessing = serialize($processingConfig->getProperties());
+        $json = unserialize($propritiesProcessing);
+
+        return new JsonResponse($json);
 
     }
 
