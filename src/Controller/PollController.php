@@ -8,6 +8,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
+use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
+use Symfony\Component\Serializer\Serializer;
+
 //use Symfony\Component\Serializer\Encoder\JsonEncoder;
 //use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 //use Symfony\Component\Serializer\Serializer;
@@ -30,8 +35,7 @@ class PollController extends Controller
 //        $entityManager->persist($poll);
 //        $entityManager->flush();
 
-        $json = $this->get('jms_serializer')->serialize($questions,'json');
-
+        $json = $this->get('jms_serializer')->serialize($questions, 'json');
 
 
 //        $json = $serializerInterface->serialize(
@@ -69,7 +73,7 @@ class PollController extends Controller
                 'No product found for id ' . $id
             );
         }
-        $json = $this->get('jms_serializer')->serialize($poll,'json');
+        $json = $this->get('jms_serializer')->serialize($poll, 'json');
         return new JsonResponse(json_decode($json));
 
 //        return $this->render('poll/show.html.twig', [
@@ -95,6 +99,10 @@ class PollController extends Controller
         $entityManager->persist($poll);
         $entityManager->flush();
 
-        return new JsonResponse();
+        $serializer = new Serializer(
+            array(new GetSetMethodNormalizer(), new ArrayDenormalizer()),
+            array(new JsonEncoder())
+        );
+        return new JsonResponse(json_decode($serializer->serialize($poll, "json")));
     }
 }
