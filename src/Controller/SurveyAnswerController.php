@@ -39,7 +39,7 @@ class SurveyAnswerController extends Controller
 
         $pollAnswer = $this->get('jms_serializer')->deserialize(json_encode($value["answer"]), PollAnswer::class, 'json');
         $survey = $this->get('jms_serializer')->deserialize(json_encode($value["survey"]), SurveyPoll::class, 'json');
-        $currentUser = $this->get('jms_serializer')->deserialize(json_encode($value["user"][0]), User::class, 'json');
+        $currentUser = $this->get('jms_serializer')->deserialize(json_encode($value["user"]), User::class, 'json');
 
 
         if (!$pollAnswer instanceof PollAnswer || !$survey instanceof SurveyPoll)

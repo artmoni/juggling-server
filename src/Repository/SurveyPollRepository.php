@@ -59,13 +59,24 @@ class SurveyPollRepository extends ServiceEntityRepository
             ->select('s2.id')
             ->join('s2.surveyAnswers', 'a')
             ->join('a.user', 'u')
-            ->where('u.id = :id')
-            ;
+            ->where('u.id = :id');
 
         $qb = $this->createQueryBuilder('s');
         $qb->where($qb->expr()->notIn('s.id', $qb2->getDQL()))
             ->setParameter('id', $user->getId());
 
         return $qb->getQuery()->getResult();
+    }
+
+
+    public function findCurrentSurvey()
+    {
+        $qb = $this->createQueryBuilder("s");
+        $now = new \DateTime();
+        $qb->where($qb->expr()->andX(
+            $qb->expr()->lte($now->getTimestamp(), "s.dateBegin")
+            ));
+
+        return $qb->getQuery()->getSingleResult();
     }
 }

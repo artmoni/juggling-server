@@ -6,6 +6,7 @@ use App\Entity\PollAnswer;
 use App\Entity\ProcessingConfig;
 use App\Entity\Scene;
 use App\Entity\SurveyAnswer;
+use App\Entity\SurveyPoll;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -58,10 +59,9 @@ class SceneController extends Controller
         $entityManager->persist($scene);
         $entityManager->flush();
 
-        return new JsonResponse(json_decode($serializer->serialize($scene,"json")));
+        return new JsonResponse(json_decode($serializer->serialize($scene, "json")));
 
     }
-
 
 
     /**
@@ -74,7 +74,7 @@ class SceneController extends Controller
         $entityManager = $this->getDoctrine()->getManager();
         $scene = $entityManager->getRepository(Scene::class)->findOneBy(array(), array('id' => 'DESC'));
         if (!$scene instanceof Scene)
-            return new JsonResponse(array("error"=>"No scene found"), JsonResponse::HTTP_NO_CONTENT);
+            return new JsonResponse(array("error" => "No scene found"), JsonResponse::HTTP_NO_CONTENT);
 
         $properties = unserialize($scene->getPropreties());
         $processingConfig = new ProcessingConfig();
@@ -96,27 +96,48 @@ class SceneController extends Controller
     {
 
         $entityManager = $this->getDoctrine()->getManager();
-        $surveyAnswer = $entityManager->getRepository(SurveyAnswer::class)->findOneBy(array(), array('id' => 'DESC'));
-        if (!$surveyAnswer instanceof SurveyAnswer) {
-            $scene = $entityManager->getRepository(Scene::class)->findOneBy(array(), array('id' => 'DESC'));
-        } else {
-            if (!$surveyAnswer instanceof SurveyAnswer) throw new Exception("Survey Not found");
 
-            $answer = $entityManager->getRepository(PollAnswer::class)->find($surveyAnswer->getPollAnswer()->getId());
+        $currentSurvey = $entityManager->getRepository(SurveyPoll::class)->findCurrentSurvey();
+        if (!$currentSurvey instanceof SurveyPoll)
+            return new JsonResponse("survey not found", JsonResponse::HTTP_NOT_FOUND);
 
-            if (!$answer instanceof PollAnswer) throw new Exception("Answer Not found");
 
-            $scene = $entityManager->getRepository(Scene::class)->find($answer->getScene()->getId());
-        }
-        if (!$scene instanceof Scene) throw new Exception("Scene not found");
+        $best = $entityManager->getRepository(SurveyAnswer::class)->findMostAnswers($currentSurvey);
+        if (!$best instanceof SurveyAnswer)
+            return new JsonResponse("Answer not found", JsonResponse::HTTP_NOT_FOUND);
 
-        $proprities = unserialize($scene->getPropreties());
-        $processingConfig = new ProcessingConfig();
-        $processingConfig->setBackground($proprities['background']);
-        $propritiesProcessing = serialize($processingConfig->getProperties());
-        $json = unserialize($propritiesProcessing);
+//        $answers_counted = array();
+//
+//        foreach ($answers as $answer) {
+//            if (!$answer instanceof PollAnswer)
+//                continue;
+//         $answers_counted[$answer->get]
+//
+//        }
 
-        return new JsonResponse($json);
+
+//        $surveyAnswer = $entityManager->getRepository(SurveyAnswer::class)->findOneBy(array(), array('id' => 'DESC'));
+//        if (!$surveyAnswer instanceof SurveyAnswer) {
+//            $scene = $entityManager->getRepository(Scene::class)->findOneBy(array(), array('id' => 'DESC'));
+//        } else {
+//            if (!$surveyAnswer instanceof SurveyAnswer) throw new Exception("Survey Not found");
+//
+//            $answer = $entityManager->getRepository(PollAnswer::class)->find($surveyAnswer->getPollAnswer()->getId());
+//
+//            if (!$answer instanceof PollAnswer) throw new Exception("Answer Not found");
+//
+//            $scene = $entityManager->getRepository(Scene::class)->find($answer->getScene()->getId());
+//        }
+//        if (!$scene instanceof Scene) throw new Exception("Scene not found");
+//
+//        $proprities = unserialize($scene->getPropreties());
+//        $processingConfig = new ProcessingConfig();
+//        $processingConfig->setBackground($proprities['background']);
+//        $propritiesProcessing = serialize($processingConfig->getProperties());
+//        $json = unserialize($propritiesProcessing);
+
+        $scene = $best->getPollAnswer()->getScene();
+        return new JsonResponse(unserialize($scene->getPropreties()));
 
     }
 

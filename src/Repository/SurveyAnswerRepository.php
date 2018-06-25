@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\SurveyAnswer;
+use App\Entity\SurveyPoll;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -47,4 +48,15 @@ class SurveyAnswerRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function findMostAnswers(SurveyPoll $poll)
+    {
+        $qb = $this->createQueryBuilder("a");
+        $qb->select("a, count(a.id) as nbAnswer")
+            ->join("a.surveyPoll", 'p')
+            ->where($qb->expr()->eq("p.id", $poll->getId()))
+            ->groupBy("a.pollAnswer")
+            ->orderBy("nbAnswer", "DESC")->setMaxResults(1);
+        return $qb->getQuery()->getSingleResult()[0];
+    }
 }
