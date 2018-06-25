@@ -29,11 +29,6 @@ class SurveyPoll
     private $dateEnd;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $question;
-
-    /**
      * @ORM\Column(type="integer", nullable=true)
      */
     private $limitUser;
@@ -83,17 +78,6 @@ class SurveyPoll
         return $this;
     }
 
-    public function getQuestion(): ?string
-    {
-        return $this->question;
-    }
-
-    public function setQuestion(?string $question): self
-    {
-        $this->question = $question;
-
-        return $this;
-    }
 
     public function getLimitUser(): ?int
     {
