@@ -102,7 +102,10 @@ class SceneController extends Controller
             return new JsonResponse("survey not found", JsonResponse::HTTP_NOT_FOUND);
 
 
-        $best = $entityManager->getRepository(SurveyAnswer::class)->findMostAnswers($currentSurvey);
+        $best_array_with_count = $entityManager->getRepository(SurveyAnswer::class)->findMostAnswers($currentSurvey);
+        if (sizeof($best_array_with_count))
+            $best = $best_array_with_count[0];
+        
         if (!$best instanceof SurveyAnswer)
             return new JsonResponse("Answer not found", JsonResponse::HTTP_NOT_FOUND);
 

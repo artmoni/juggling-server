@@ -57,6 +57,6 @@ class SurveyAnswerRepository extends ServiceEntityRepository
             ->where($qb->expr()->eq("p.id", $poll->getId()))
             ->groupBy("a.pollAnswer")
             ->orderBy("nbAnswer", "DESC")->setMaxResults(1);
-        return $qb->getQuery()->getSingleResult()[0];
+        return $qb->getQuery()->getSingleResult();
     }
 }
