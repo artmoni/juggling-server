@@ -73,9 +73,12 @@ class SurveyPollRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder("s");
         $now = new \DateTime();
-        $qb->where($qb->expr()->andX(
-            $qb->expr()->lte($now->getTimestamp(), "s.dateBegin")
-            ));
+        $qb->where("s.dateBegin <= :now");
+        $qb->andWhere("s.dateEnd>= :now");
+        $qb->setParameter("now",$now->format("Y-m-d"));
+
+        $qb->setMaxResults(1);
+        $qb->orderBy("s.dateBegin", "ASC");
 
         return $qb->getQuery()->getSingleResult();
     }
