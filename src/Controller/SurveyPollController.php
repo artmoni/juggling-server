@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Poll;
 use App\Entity\SurveyAnswer;
 use App\Entity\SurveyPoll;
 use App\Entity\User;
@@ -66,7 +67,7 @@ class SurveyPollController extends Controller
     }
 
     /**
-     * @Route("/surveys/polls" , name="survey_poll_create")
+     * @Route("/surveys" , name="survey_create")
      * @Method("POST")
      * @param Request $request
      * @return JsonResponse
@@ -74,6 +75,23 @@ class SurveyPollController extends Controller
     public
     function create(Request $request)
     {
-        return new JsonResponse();
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $value = json_decode($request->getContent(), true);
+
+        $poll = $this->get('jms_serializer')->deserialize(json_encode($value["poll"]), Poll::class, 'json');
+        $survey = new SurveyPoll();
+        $survey->setPoll($poll);
+        $survey->setDateBegin(new \DateTime());
+        $nextDate = new \DateTime();
+        $nextDate->add("+10 min");
+        $survey->setDateEnd($nextDate);
+
+        $entityManager->persist($poll);
+        $entityManager->persist($survey);
+        $entityManager->flush();
+
+        $surveys_json = $this->get('jms_serializer')->serialize($survey, 'json');
+        return new JsonResponse(json_decode($surveys_json));
     }
 }

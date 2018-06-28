@@ -94,33 +94,11 @@ class SurveyPoll
     /**
      * @return Collection|Poll[]
      */
-    public function getPoll(): Collection
+    public function getPoll()
     {
         return $this->poll;
     }
 
-    public function addPoll(Poll $poll): self
-    {
-        if (!$this->poll->contains($poll)) {
-            $this->poll[] = $poll;
-            $poll->setSurveyPoll($this);
-        }
-
-        return $this;
-    }
-
-    public function removePoll(Poll $poll): self
-    {
-        if ($this->poll->contains($poll)) {
-            $this->poll->removeElement($poll);
-            // set the owning side to null (unless already changed)
-            if ($poll->getSurveyPoll() === $this) {
-                $poll->setSurveyPoll(null);
-            }
-        }
-
-        return $this;
-    }
 
     /**
      * @return Collection|SurveyAnswer[]
@@ -151,5 +129,13 @@ class SurveyPoll
         }
 
         return $this;
+    }
+
+    /**
+     * @param mixed $poll
+     */
+    public function setPoll($poll)
+    {
+        $this->poll = $poll;
     }
 }
