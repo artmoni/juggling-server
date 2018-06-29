@@ -84,7 +84,7 @@ class SurveyPollController extends Controller
         $survey->setPoll($poll);
         $survey->setDateBegin(new \DateTime());
         $nextDate = new \DateTime();
-        $nextDate->add("+10 min");
+        $nextDate->modify("+10 minutes");
         $survey->setDateEnd($nextDate);
 
         $entityManager->persist($poll);
