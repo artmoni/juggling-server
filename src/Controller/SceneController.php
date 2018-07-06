@@ -39,15 +39,21 @@ class SceneController extends Controller
      */
     public function createProperty(Request $request)
     {
-//        $background = $request->get('background');
+        $background = $request->get('background');
+        $velocity = $request->get('velocity');
+        $form = $request->get('form');
         $name = $request->get('name');
 
         $serializer = new Serializer(
             array(new GetSetMethodNormalizer(), new ArrayDenormalizer()),
             array(new JsonEncoder())
         );
-        $processingConfig = $serializer->deserialize($request->getContent(), ProcessingConfig::class, "json");
-//        $processingConfig->setBackground($processingConfig->getBackground());
+//        $processingConfig = $serializer->deserialize($request->getContent(), ProcessingConfig::class, "json");
+
+        $processingConfig = new ProcessingConfig();
+        $processingConfig->setBackground($background);
+        $processingConfig->setVelocity($velocity);
+        $processingConfig->setForm($form);
 
         $serialized_properties = serialize($processingConfig->getProperties());
 

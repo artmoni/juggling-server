@@ -10,6 +10,11 @@ class ProcessingConfig
 
     private $background;
 
+    private $velocity;
+
+    private $form;
+
+
     public function getId()
     {
         return $this->id;
@@ -20,6 +25,7 @@ class ProcessingConfig
         return $this->background;
     }
 
+
     public function setBackground(int $background): self
     {
         $this->background = $background;
@@ -29,8 +35,29 @@ class ProcessingConfig
 
     public function getProperties(): ?array
     {
-        $properties = array("background" => $this->background);
+        $properties = array("background" => $this->background,"velocity" => $this->velocity,"form"=>$this->form);
         return $properties;
+    }
+
+    public function getVelocity()
+    {
+        return $this->velocity;
+    }
+
+    public function setVelocity($velocity)
+    {
+        $this->velocity = $velocity;
+    }
+
+
+    public function getForm()
+    {
+        return $this->form;
+    }
+
+    public function setForm($form)
+    {
+        $this->form = $form;
     }
 
 //    public function getPropertiesToString(): ?string
